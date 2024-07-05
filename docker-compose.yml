@@ -1,0 +1,17 @@
+services:
+    server:
+        container_name: server123
+        image: server123
+        build: ./server
+        restart: unless-stopped
+        environment:
+            - PORT=5000
+    nginx:
+        container_name: custom_nginx
+        image: custom_nginx
+        build: ./nginx
+        ports:
+            - 80:80
+        depends_on:
+            - server
+        restart: unless-stopped
