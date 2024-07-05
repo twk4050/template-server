@@ -1,0 +1,73 @@
+<!-- https://www.tutorialspoint.com/html/html_websocket.htm -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Websocket Client</title>
+    </head>
+    <body>
+        <h1>Websocket Client</h1>
+        <div>
+            <input type="text" id="tokenInput" placeholder="paste access token here " />
+            <button id="connectButton">Connect Button</button>
+            <button id="disconnectButton">Disconnect Button</button>
+        </div>
+
+        <br />
+        <input type="text" id="messageInput" placeholder="type a message ..." />
+        <button id="sendButton">Send Message</button>
+
+        <br />
+        <div id="messages"></div>
+    </body>
+
+    <script>
+        let socket;
+
+        const ws_url = "ws://localhost/ws";
+
+        document.getElementById("connectButton").addEventListener("click", () => {
+            const tokenInput = document.getElementById("tokenInput").value;
+
+            connect(tokenInput);
+        });
+
+        document.getElementById("disconnectButton").addEventListener("click", () => {
+            disconnect();
+        });
+
+        function connect(token) {
+            if (token) {
+                socket = new WebSocket(ws_url, [token]);
+            } else {
+                socket = new WebSocket(ws_url);
+            }
+
+            socket.addEventListener("open", () => {
+                console.log("connected to server");
+            });
+
+            socket.addEventListener("message", (event) => {
+                const messageDiv = document.createElement("div");
+                messageDiv.textContent = event.data;
+                document.getElementById("messages").appendChild(messageDiv);
+            });
+
+            document.getElementById("sendButton").addEventListener("click", () => {
+                const messageInput = document.getElementById("messageInput");
+
+                const message = messageInput.value;
+
+                socket.send(message);
+                messageInput.value = "";
+            });
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.close();
+            }
+        }
+    </script>
+</html>
